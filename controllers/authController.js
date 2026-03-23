@@ -12,24 +12,27 @@ const signup = async (req, res) => {
         const { email, password, name } = req.body;
         let user = await User.findOne({ email });
 
-        const otp = generateOTP();
-        const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+        // const otp = generateOTP();
+        // const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
         if (!user) {
-            user = new User({ email, password, otp, otpExpiry, name });
-        } else {
-            user.otp = otp;
-            user.otpExpiry = otpExpiry;
-        }
+            user = new User({ email, password, name });
+        } 
+        // else {
+        //     user.otp = otp;
+        //     user.otpExpiry = otpExpiry;
+        // }
 
         await user.save();
 
-        console.log("Before sending email");
+        res.json({ message: "User registered successfully!" });
+
+        // console.log("Before sending email");
         
-        sendOTPEmail(email, otp);
+        // sendOTPEmail(email, otp);
         
-        res.json({ message: "OTP sent to email" });
-        console.log("After sending email");
+        // res.json({ message: "OTP sent to email" });
+        // console.log("After sending email");
 
     } catch (err) {
         res.status(500).json({ message: "Server error", error: err.message });
@@ -40,31 +43,31 @@ const signup = async (req, res) => {
 
 // verify otp
 
-const verifyOTP = async (req, res) => {
-    try {
-        const { email, otp } = req.body;
+// const verifyOTP = async (req, res) => {
+//     try {
+//         const { email, otp } = req.body;
 
-        const user = await User.findOne({ email });
+//         const user = await User.findOne({ email });
 
-        if (!user) {
-            return res.status(400).json({ message: "User not found!" });
-        }
+//         if (!user) {
+//             return res.status(400).json({ message: "User not found!" });
+//         }
 
-        if (user.otp !== otp || user.otpExpiry < new Date()) {
-            return res.status(400).json({ message: "Invalid or Expired OTP" });
-        }
+//         if (user.otp !== otp || user.otpExpiry < new Date()) {
+//             return res.status(400).json({ message: "Invalid or Expired OTP" });
+//         }
 
-        user.isVerified = true;
-        user.otp = null;
-        user.otpExpiry = null;
+//         user.isVerified = true;
+//         user.otp = null;
+//         user.otpExpiry = null;
 
-        await user.save();
+//         await user.save();
 
-        res.json({ message: "Account Verified!" });
-    } catch (err) {
-        res.status(500).json({ message: "Server Error", error: err.message });
-    }
-}
+//         res.json({ message: "Account Verified!" });
+//     } catch (err) {
+//         res.status(500).json({ message: "Server Error", error: err.message });
+//     }
+// }
 
 
 const login = async (req, res) => {
@@ -81,9 +84,9 @@ const login = async (req, res) => {
             return res.status(400).json({ message: "Invalid Credentials!" });
         }
 
-        if (!user.isVerified) {
-            return res.status(400).json({ message: "Account not verified!" });
-        }
+        // if (!user.isVerified) {
+        //     return res.status(400).json({ message: "Account not verified!" });
+        // }
 
         const token = jwt.sign(
             { id: user._id },
@@ -115,4 +118,4 @@ const getProfile = async (req, res) => {
     }
 }
 
-module.exports = { signup, verifyOTP, login, getProfile };
+module.exports = { signup, login, getProfile };
