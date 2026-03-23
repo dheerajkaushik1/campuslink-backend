@@ -24,11 +24,11 @@ const signup = async (req, res) => {
 
         await user.save();
 
-        res.json({ message: "OTP sent to email" });
         console.log("Before sending email");
-
+        
         sendOTPEmail(email, otp);
-
+        
+        res.json({ message: "OTP sent to email" });
         console.log("After sending email");
 
     } catch (err) {

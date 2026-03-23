@@ -1,41 +1,22 @@
-require('dotenv').config();
-const nodemailer = require('nodemailer');
-
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
-    connectionTimeout: 5000,
-    greetingTimeout: 5000,
-    socketTimeout: 5000,
-});
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOTPEmail = async (email, otp) => {
     try {
-        const mailOptions = {
-            from: `"Campuslink" <${process.env.EMAIL_USER}>`,
+        await resend.emails.send({
+            from: 'onboarding@resend.dev',
             to: email,
-            subject: "Verify your campuslink account",
+            subject: 'Verify your CampusLink account',
             html: `
-            <div style="font-family: Arial; padding: 20px;">
-            <h2>CampusLink Verification</h2>
-            <p>Your OTP is:</p>
-            <h1 style="letter-spacing: 4px;">${otp}</h1>
-            <p>This OTP will expire in 5 minutes.</p>
-        </div>
-        `,
-        };
-        console.log("EMAIL_USER:", process.env.EMAIL_USER);
-        console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
-        const info = await transporter.sendMail(mailOptions);
-        console.log("✅ Email sent:", info.response);
-    } catch (err) {
-        console.error("❌ Error sending email:", err);
-    }
-}
+                <h2>CampusLink Verification</h2>
+                <p>Your OTP is:</p>
+                <h1>${otp}</h1>
+                <p>This OTP will expire in 5 minutes.</p>
+            `
+        });
 
-module.exports = { sendOTPEmail };
+        console.log("✅ Email sent via Resend");
+    } catch (err) {
+        console.log("❌ Email error:", err);
+    }
+};
