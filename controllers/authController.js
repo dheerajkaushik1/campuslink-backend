@@ -87,11 +87,14 @@ const login = async (req, res) => {
         // if (!user.isVerified) {
         //     return res.status(400).json({ message: "Account not verified!" });
         // }
+        await User.findByIdAndUpdate(user._id,{
+            lastLogin: new Date()
+        })
 
         const token = jwt.sign(
             { id: user._id },
             process.env.JWT_SECRET,
-            { expiresIn: '7d' }
+            { expiresIn: '1d' }
         );
 
 
