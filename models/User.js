@@ -21,10 +21,20 @@ const userSchema = new mongoose.Schema({
     lastLogin: {
         type: Date,
         default: null
-    }
-}, {
-    timestamps: true
-})
+    },
+    favorites: {
+        type: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Note",
+            },
+        ],
+        default: [],
+    },
+},
+    {
+        timestamps: true
+    })
 
 const User = mongoose.model("User", userSchema);
 

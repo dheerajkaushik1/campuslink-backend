@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 const authRoute = require('./routes/authRoutes');
 const noteRoute = require('./routes/noteRoutes');
 const noteRequestRoute = require('./routes/NoteRequestRoutes');
+const favoriteRoute = require("./routes/favoriteRoutes");
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/api/auth", authRoute);
 app.use("/api/notes", noteRoute);
 app.use("/api/note-requests", noteRequestRoute);
+app.use("/api/favorites", favoriteRoute);
 
 
 const PORT = process.env.PORT || 5000;
