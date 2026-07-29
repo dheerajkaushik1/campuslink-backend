@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Note = require("../models/Note");
 
 //Upload Note
@@ -65,9 +66,80 @@ const deleteNote = async (req, res) => {
     }
 }
 
+// Increament Views count
+
+const increamentView = async (req, res) => {
+    try{
+        const {noteId} = req.params;
+
+        const note = await Note.findByIdAndUpdate(
+            noteId,
+            {
+                $inc: {views: 1},
+            },
+            {
+                new: true,
+            }
+        );
+
+        if(!note){
+            return res.status(404).json({
+                message: "Note not found!",
+            });
+        }
+
+        res.json({
+            message: "View count updated",
+            views: note.views,
+        });
+
+    } catch (error){
+        res.status(500).json({
+            message: "Server Error",
+            error: error.message,
+        });
+    }
+};
+
+// Increament Download Count
+
+const increamentDownload = async (req, res) => {
+    try{
+        const {noteId} = req.params;
+
+    const note = await Note.findByIdAndUpdate(
+        noteId,
+        {
+            $inc: {downloads: 1}, 
+        },
+        {
+            new: true,
+        }
+    );
+
+    if(!note){
+        return res.status(404).json({
+            message: "Note not found!",
+        });
+    }
+
+    res.json({
+        message: "Downloads count updated",
+        downloads: note.downloads,
+    });
+    } catch (error){
+        res.status(500).json({
+            message: "server error",
+            error: error.message,
+        });
+    }
+};
+
 module.exports = {
     uploadNote,
     getAllNotes,
     searchNotes,
     deleteNote,
+    increamentView,
+    increamentDownload,
 }

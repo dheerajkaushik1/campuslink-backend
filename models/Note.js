@@ -76,12 +76,12 @@ const noteSchema = new mongoose.Schema({
 
     views: {
         type: Number,
-        default: 0,
+        default: 30,
     },
 
     downloads: {
         type: Number,
-        default: 0,
+        default: 20,
     },
 }, 
     {
