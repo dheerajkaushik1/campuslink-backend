@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { UNSAFE_getTurboStreamSingleFetchDataStrategy } = require("react-router-dom");
 
 const quizSessionSchema = new mongoose.Schema(
     {
