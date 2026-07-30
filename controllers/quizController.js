@@ -8,31 +8,38 @@ const startQuiz = async (req, res) => {
     try {
         const { subject, difficulty } = req.body;
 
+        console.log({
+            subject,
+            difficulty
+        });
+
         const prompt = `
-        Generate exactly 10 multiple choice questions.
+You are an expert university exam paper setter.
 
-Subject: ${subject}
-Difficulty: ${difficulty}
+Generate EXACTLY 10 multiple-choice questions.
 
-Rules:
-1. Return ONLY valid JSON.
-2. No markdown.
-3. No explanation.
-4. Exactly 10 questions.
-5. Every question must have:
-   - question
-   - options (4 strings)
-   - correctAnswer (0-3)
+SUBJECT: ${subject}
+DIFFICULTY: ${difficulty}
 
-Example:
+IMPORTANT RULES:
 
-[
-  {
-    "question":"...",
-    "options":["A","B","C","D"],
-    "correctAnswer":2
-  }
-]`;
+- ALL questions MUST belong ONLY to the subject "${subject}".
+- DO NOT include questions from any other subject.
+- The difficulty MUST be "${difficulty}".
+- Make every quiz different from previous ones.
+- Avoid repeating common questions.
+- Return ONLY a JSON array.
+
+Each question must contain:
+
+{
+  "question": "...",
+  "options": ["A","B","C","D"],
+  "correctAnswer": 0
+}
+
+Return exactly 10 questions.
+`;
 
         const response = await ai.models.generateContent({
             model: "gemini-3.6-flash",
@@ -95,6 +102,12 @@ const submitQuiz = async (req, res) => {
             }
         });
 
+        const percentage = Math.round(
+            (score / totalQuestions) * 100
+        );
+
+
+
         await Leaderboard.create({
             user: req.user.id,
             subject: session.subject,
@@ -106,8 +119,14 @@ const submitQuiz = async (req, res) => {
         await QuizSession.findByIdAndDelete(quizId);
 
         res.json({
+            quizId,
             score,
-            totalQuestions: session.questions.length,
+            totalQuestions,
+            correctAnswers: score,
+            wrongAnswers: totalQuestions - score,
+            percentage,
+            subject: session.subject,
+            difficulty: session.difficulty,
         });
 
 
