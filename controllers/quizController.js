@@ -102,20 +102,20 @@ const submitQuiz = async (req, res) => {
             }
         });
 
-        const percentage = Math.round(
+       const totalQuestions = session.questions.length;
+
+       const percentage = Math.round(
             (score / totalQuestions) * 100
         );
-
-
 
         await Leaderboard.create({
             user: req.user.id,
             subject: session.subject,
             difficulty: session.difficulty,
             score,
-            totalQuestions: session.questions.length,
+            totalQuestions,
         });
-
+    
         await QuizSession.findByIdAndDelete(quizId);
 
         res.json({
