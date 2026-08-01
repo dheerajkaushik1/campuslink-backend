@@ -6,9 +6,6 @@ const uploadNote = async (req, res) =>{
     try{
         const {title, subject, description, previewUrl, downloadUrl} = req.body;
 
-        // previewUrl = previewUrl.trim();
-        // downloadUrl = downloadUrl.trim();
-
         const note = await Note.create({
             title,
             subject,

@@ -64,16 +64,6 @@ const noteSchema = new mongoose.Schema({
         type: String
     },
 
-    rating: {
-        type:  [ratingSchema],
-        default: [],
-    },
-
-    comment: {
-        type: [commentSchema],
-        default: [],
-    },
-
     views: {
         type: Number,
         default: 30,

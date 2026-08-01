@@ -8,6 +8,8 @@ const noteRoute = require('./routes/noteRoutes');
 const noteRequestRoute = require('./routes/NoteRequestRoutes');
 const favoriteRoute = require("./routes/favoriteRoutes");
 const quizRoute = require("./routes/quizRoutes");
+const syllabusRoute = require("./routes/syllabusRoutes");
+const pypRoute = require("./routes/pypRoutes");
 
 dotenv.config();
 
@@ -21,6 +23,8 @@ app.use("/api/notes", noteRoute);
 app.use("/api/note-requests", noteRequestRoute);
 app.use("/api/favorites", favoriteRoute);
 app.use("/api/quiz", quizRoute);
+app.use("/api/syllabus", syllabusRoute);
+app.use("/api/pyp", pypRoute);
 
 
 const PORT = process.env.PORT || 5000;

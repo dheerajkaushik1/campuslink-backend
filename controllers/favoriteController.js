@@ -1,67 +1,87 @@
 const User = require("../models/User");
 const Note = require("../models/Note");
+const Syllabus = require("../models/Syllabus");
+const PyP = require("../models/PyP");
 
-//toggle favorites
+const models = {
+    note: {
+        model: Note,
+        field: "notes",
+    },
+    syllabus: {
+        model: Syllabus,
+        field: "syllabus",
+    },
+    paper: {
+        model: PyP,
+        field: "papers",
+    },
+};
+
+// Toggle Favorite
 const toggleFavorite = async (req, res) => {
     try {
-        const { noteId } = req.params;
+        const { type, id } = req.params;
 
-        const note = await Note.findById(noteId);
+        const config = models[type];
 
-        if (!note) {
+        if (!config) {
+            return res.status(400).json({
+                message: "Invalid favorite type",
+            });
+        }
+
+        const resource = await config.model.findById(id);
+
+        if (!resource) {
             return res.status(404).json({
-                message: "Note not Found",
+                message: `${type} not found`,
             });
         }
 
         const user = await User.findById(req.user.id);
 
-        if (!user) {
-            return res.status(404).json({
-                message: "User not found",
-            });
-        }
+        const favorites = user.favorites[config.field];
 
-        if (!user.favorites) {
-            user.favorites = [];
-            await user.save();
-        };
-
-        const isFavorite = user.favorites.some(
-            (id) => id.toString() === noteId
+        const exists = favorites.some(
+            (favId) => favId.toString() === id
         );
 
-        if (!isFavorite) {
-            user.favorites.push(noteId);
+        if (exists) {
+            user.favorites[config.field] = favorites.filter(
+                (favId) => favId.toString() !== id
+            );
+
             await user.save();
+
             return res.json({
-                message: "Added to favorites",
-                favorites: user.favorites,
+                message: "Removed from favorites",
+                favorites: user.favorites[config.field],
             });
         }
 
-        user.favorites = user.favorites.filter(
-            (id) => id.toString() !== noteId
-        );
+        favorites.push(id);
 
         await user.save();
 
         res.json({
-            message: "Removed from favorites",
-            favorites: user.favorites,
+            message: "Added to favorites",
+            favorites: user.favorites[config.field],
         });
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({
             message: error.message,
         });
     }
 };
 
-// get favorite notes
+// Get Favorites
 const getFavorites = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).populate('favorites');
+        const user = await User.findById(req.user.id)
+            .populate("favorites.notes")
+            .populate("favorites.syllabus")
+            .populate("favorites.papers");
 
         res.json(user.favorites);
     } catch (error) {
