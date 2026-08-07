@@ -1,73 +1,53 @@
 const User = require("../models/User");
 const Note = require("../models/Note");
-const Syllabus = require("../models/Syllabus");
-const PyP = require("../models/PyP");
-
-const models = {
-    note: {
-        model: Note,
-        field: "notes",
-    },
-    syllabus: {
-        model: Syllabus,
-        field: "syllabus",
-    },
-    paper: {
-        model: PyP,
-        field: "papers",
-    },
-};
 
 // Toggle Favorite
 const toggleFavorite = async (req, res) => {
     try {
-        const { type, id } = req.params;
+        const { noteId } = req.params;
 
-        const config = models[type];
+        const note = await Note.findById(noteId);
 
-        if (!config) {
-            return res.status(400).json({
-                message: "Invalid favorite type",
-            });
-        }
-
-        const resource = await config.model.findById(id);
-
-        if (!resource) {
+        if (!note) {
             return res.status(404).json({
-                message: `${type} not found`,
+                message: "Note not found",
             });
         }
 
         const user = await User.findById(req.user.id);
 
-        const favorites = user.favorites[config.field];
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+            });
+        }
 
-        const exists = favorites.some(
-            (favId) => favId.toString() === id
+        const exists = user.favorites.some(
+            (id) => id.toString() === noteId
         );
 
         if (exists) {
-            user.favorites[config.field] = favorites.filter(
-                (favId) => favId.toString() !== id
+            user.favorites = user.favorites.filter(
+                (id) => id.toString() !== noteId
             );
 
             await user.save();
 
             return res.json({
                 message: "Removed from favorites",
-                favorites: user.favorites[config.field],
+                favorites: user.favorites,
             });
         }
 
-        favorites.push(id);
+        user.favorites.push(noteId);
 
         await user.save();
 
         res.json({
             message: "Added to favorites",
-            favorites: user.favorites[config.field],
+            favorites: user.favorites,
         });
+
     } catch (error) {
         res.status(500).json({
             message: error.message,
@@ -79,11 +59,10 @@ const toggleFavorite = async (req, res) => {
 const getFavorites = async (req, res) => {
     try {
         const user = await User.findById(req.user.id)
-            .populate("favorites.notes")
-            .populate("favorites.syllabus")
-            .populate("favorites.papers");
+            .populate("favorites");
 
         res.json(user.favorites);
+
     } catch (error) {
         res.status(500).json({
             message: error.message,

@@ -22,31 +22,11 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: null
     },
-    favorites: {
-        notes: {
-            type: [{
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Note",
-            }],
-            default: [],
-        },
-
-        syllabus: {
-            type: [{
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Syllabus",
-            }],
-            default: [],
-        },
-
-        papers: {
-            type: [{
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "PyP",
-            }],
-            default: [],
-        },
-    }
+    favorites: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Note",
+        default: [],
+    }],
 },
     {
         timestamps: true
