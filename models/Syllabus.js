@@ -14,10 +14,8 @@ const syllabusSchema = new mongoose.Schema(
     },
 
     semester: {
-      type: Number,
+      type: string,
       required: true,
-      min: 1,
-      max: 8,
     },
 
     previewUrl: {
