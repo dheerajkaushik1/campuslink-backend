@@ -14,7 +14,7 @@ const syllabusSchema = new mongoose.Schema(
     },
 
     semester: {
-      type: string,
+      type: String,
       required: true,
     },
 
