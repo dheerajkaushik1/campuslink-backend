@@ -96,9 +96,16 @@ const submitQuiz = async (req, res) => {
         }
 
         let score = 0;
+        const wrongQuestions = [];
         session.questions.forEach((question, index) => {
             if (answers[index] === question.correctAnswer) {
                 score++;
+            } else {
+                wrongQuestions.push({
+                    question: question.question,
+                    correctAnswer: question.options[question.correctAnswer],
+                    yourAnswer: question.options[answers[index]] || "No answer",
+                });
             }
         });
 
@@ -129,6 +136,8 @@ const submitQuiz = async (req, res) => {
             percentage,
             subject: session.subject,
             difficulty: session.difficulty,
+
+            wrongQuestions,
         });
 
 
