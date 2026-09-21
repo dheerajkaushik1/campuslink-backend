@@ -10,6 +10,7 @@ const favoriteRoute = require("./routes/favoriteRoutes");
 const quizRoute = require("./routes/quizRoutes");
 const syllabusRoute = require("./routes/syllabusRoutes");
 const pypRoute = require("./routes/pypRoutes");
+const profileRoute = require("./routes/profileRoutes");
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use("/api/favorites", favoriteRoute);
 app.use("/api/quiz", quizRoute);
 app.use("/api/syllabus", syllabusRoute);
 app.use("/api/pyp", pypRoute);
+app.use("/api/profile", profileRoute);
 
 
 const PORT = process.env.PORT || 5000;
