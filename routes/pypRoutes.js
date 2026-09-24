@@ -4,7 +4,8 @@ const router = express.Router();
 const {
     uploadPaper,
     getAllPaper,
-    searchPaper
+    searchPaper,
+    editPaper
 } = require("../controllers/PyPController");
 
 // Upload Paper
@@ -15,5 +16,8 @@ router.get("/all-paper", getAllPaper);
 
 // search Paper
 router.get("/search-paper", searchPaper);
+
+// Update Paper
+router.put("/:id", editPaper);
 
 module.exports = router;

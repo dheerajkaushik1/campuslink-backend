@@ -63,6 +63,45 @@ const deleteNote = async (req, res) => {
     }
 }
 
+// Edit / Update a Note
+const editNote = async (req, res) => {
+    try {
+        const { title, subject, description, previewUrl, downloadUrl } = req.body;
+
+        const note = await Note.findByIdAndUpdate(
+            req.params.id,
+            {
+                title,
+                subject,
+                description,
+                previewUrl,
+                downloadUrl,
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+
+        if (!note) {
+            return res.status(404).json({
+                message: "Note not found!",
+            });
+        }
+
+        res.json({
+            message: "Note updated successfully! ✏️",
+            note,
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            message: "Server Error",
+            error: err.message,
+        });
+    }
+};
+
 // Increament Views count
 
 const increamentView = async (req, res) => {
@@ -137,6 +176,7 @@ module.exports = {
     getAllNotes,
     searchNotes,
     deleteNote,
+    editNote,
     increamentView,
     increamentDownload,
 }

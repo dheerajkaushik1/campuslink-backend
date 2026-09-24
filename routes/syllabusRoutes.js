@@ -4,7 +4,8 @@ const router = express.Router();
 const {
     uploadSyllabus,
     getAllSyllabus,
-    searchSyllabus
+    searchSyllabus,
+    editSyllabus
 } = require("../controllers/syllabusController");
 
 // Upload Syllabus
@@ -15,5 +16,8 @@ router.get("/all-syllabus", getAllSyllabus);
 
 // Search Syllabus
 router.get("/search-syllabus", searchSyllabus);
+
+// Update Syllabus
+router.put("/:id", editSyllabus);
 
 module.exports = router;

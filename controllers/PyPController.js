@@ -73,8 +73,60 @@ const searchPaper = async (req, res) => {
     }
 };
 
+// Edit / Update Paper
+
+const editPaper = async (req, res) => {
+    try {
+        const {
+            title,
+            subject,
+            branch,
+            semester,
+            year,
+            examType,
+            previewUrl,
+            downloadUrl
+        } = req.body;
+
+        const paper = await PyP.findByIdAndUpdate(
+            req.params.id,
+            {
+                title,
+                subject,
+                branch,
+                semester,
+                year,
+                examType,
+                previewUrl,
+                downloadUrl,
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+
+        if (!paper) {
+            return res.status(404).json({
+                message: "Paper not found!",
+            });
+        }
+
+        res.json({
+            message: "Paper updated successfully! ✏️",
+            paper,
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            message: err.message,
+        });
+    }
+};
+
 module.exports = {
     searchPaper,
     uploadPaper,
     getAllPaper,
+    editPaper
 }

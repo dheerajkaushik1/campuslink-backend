@@ -56,17 +56,63 @@ const searchSyllabus = async (req, res) => {
             ],
         });
 
-        res.status(201).json(syllabus);
+        res.status(200).json(syllabus);
 
     } catch (error) {
         res.status(500).json({
             message: error.message,
         });
     }
-}
+};
+
+// Edit / Update Syllabus
+
+const editSyllabus = async (req, res) => {
+    try {
+        const {
+            subject,
+            branch,
+            semester,
+            previewUrl,
+            downloadUrl
+        } = req.body;
+
+        const syllabus = await Syllabus.findByIdAndUpdate(
+            req.params.id,
+            {
+                subject,
+                branch,
+                semester,
+                previewUrl,
+                downloadUrl,
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+
+        if (!syllabus) {
+            return res.status(404).json({
+                message: "Syllabus not found!",
+            });
+        }
+
+        res.json({
+            message: "Syllabus updated successfully! ✏️",
+            syllabus,
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+};
 
 module.exports ={
     uploadSyllabus,
     getAllSyllabus,
     searchSyllabus,
+    editSyllabus
 }
